@@ -1,6 +1,7 @@
 ---
 title: "Analisis Salarios"
 image: "BUAP-logo.png"
+embed-resources: true
 author: 
   [Abelardo Morales]
 date-modified: 16-Octubre-2023
