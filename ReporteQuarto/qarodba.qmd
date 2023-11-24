@@ -1,0 +1,345 @@
+---
+title: "Analisis Salarios"
+author: 
+  [Abelardo Morales,
+   Omar Zabdiel, 
+   Héctor Rebolledo, 
+   Sergio Moyotl, 
+   Fernando Rivera]
+date-modified: 16-Octubre-2023
+date: 10-Octubre-2023
+category: R
+execute: 
+  warning: false
+  cache: true
+comments:
+  hypothesis: true
+format: 
+  html:
+    fig-cap-location: top
+    number-sections: true
+    code-copy: true
+    code-fold: show
+    code-tools:
+      source: false
+      toggle: true
+      caption: none
+    code-block-border-left: "darkgreen"
+    code-block-bg: true
+    resources: "Data"
+    title-block-banner: true
+    page-layout: article
+    theme: darkly
+    toc-title: Código
+    abstract: Resumen de salarios de futbolistas en ligas europeas
+    title-block-categories: true
+    keywords: [R]
+    anchor-sections: true
+    number-offset: 0
+    toc-expand: true
+    smooth-scroll: true
+    fontsize: 1.1em
+    linestretch: 1.7
+    toc: true
+    toc-depth: 3
+knitr: 
+ opts_chunk: 
+   collapse: true
+   
+---
+
+# DATOS
+
+Mediante web scrapping se recolectaron datos de los salarios de futbolistas en ligas europeas actualizados a la fecha de hoy de los sitios:
+
+<https://www.fichajes.com/>
+<https://www.kaggle.com/>
+<https://www.salaryexplorer.com/>
+
+Seguido a eso se exportaron a archivos csv y se estudiaron mediante R.
+
+```{r}
+
+library(readxl)
+library(tidyverse)
+library(rmarkdown)
+library(knitr)
+library(DT)
+library(kableExtra)
+library(here)
+library(rstatix)
+library(ggpubr)
+
+
+options(scipen=999)
+
+
+dfsalarios <- read_excel(here("Data/SalariosFut.xlsx"), 
+                       col_types = c("text", "text", "text", 
+                                     "date", "text"))
+dfsalarios
+```
+
+
+
+```{r}
+#| classes: column-page
+
+kbl(head(dfsalarios[,-4], 15), align = "c", longtable = T) %>% kable_material_dark(full_width=T)
+```
+
+Debido a la forma en como se recolectaron los datos, fue  necesario hacer "limpieza" de los mismos 
+
+```{r}
+ 
+names(dfsalarios) <- str_replace(names(dfsalarios), 
+                                 pattern = " ", replacement = "_")
+
+dfsalariosFut <-  dfsalarios %>% 
+  mutate(Edad=as.numeric( str_sub(JUGADOR, -7, -6)),
+         NombreyP=str_sub(JUGADOR, 1, -8),
+         Nombre=str_replace(NombreyP, "[A-Z]{3,}", ""),
+         Pais_Origen=str_extract(JUGADOR, "[A-Z]{3,}"),
+         Salario_a=str_replace(str_sub(SALARIO_ANUAL, 1, -2), ",", "."),
+         Factor_anual=ifelse(
+           str_sub(SALARIO_ANUAL, -1)=="M",
+           1000000,
+           1000),
+         Salario_m=str_replace(str_sub(SALARIO_MENSUAL, 1, -2), ",", "."),
+         Factor_mensual=ifelse(
+           str_sub(SALARIO_MENSUAL, -1)=="M",
+           1000000,
+           1000),
+         Salario_anual_EUR=as.numeric(Salario_a)*Factor_anual,
+         Salario_mensual_EUR=as.numeric(Salario_m)*Factor_mensual,
+         Salario_mensual_USD=Salario_mensual_EUR*1.05,
+         Salario_mensual_MX=Salario_mensual_EUR*18.87) %>%
+  select(Nombre,Edad, Pais_Origen,Salario_anual_EUR,Salario_mensual_EUR,
+         Salario_mensual_USD, Salario_mensual_MX, 
+         Equipo, HASTA) %>% 
+  na.omit() %>% 
+  tibble()
+
+dfsalariosFut
+  
+```
+
+<br>
+<br>
+
+# ANALISIS
+
+Ya con los datos en limpio, podemos obtener información acerca de estos
+
+> Resumen
+
+```{r}
+#| results: markup
+
+dfsalariosFut %>% summary()
+```
+
+<br>
+<br>
+
+{{< pagebreak >}}
+
+## EQUIPOS
+
+Se utilizaron datos de los siguientes equipos:
+
+> Clubes de futbol
+
+```{r}
+unique(dfsalariosFut$Equipo)
+```
+
+<br>
+<br>
+
+
+## PAIS DE ORIGEN
+
+> Pais de origen de los jugadores
+
+```{r}
+unique(dfsalariosFut$Pais_Origen) 
+
+```
+
+> Resumen país de origen 
+
+```{r}
+
+fut_pais <- dfsalariosFut %>% 
+  group_by(Pais_Origen) %>% 
+  summarise(Conteo=n()) %>% 
+  arrange(desc(Conteo))
+# Pais de origen de los jugadores ordenados de mayor a menor
+
+kbl(head(fut_pais, 15), align = "c") %>% kable_material_dark(full_width=FALSE)
+```
+
+Podemos ver de donde provienen la mayoria de jugadores de estas ligas
+
+```{r}
+#| fig-cap: Pais origen
+ggplot(head(fut_pais, n = 12), mapping = aes(x = Pais_Origen, y = Conteo))+
+  geom_col()
+
+```
+
+
+```{r}
+#| fig-cap: Pais-origen
+
+ggplot(head(fut_pais, n = 12), 
+       mapping = aes(x = reorder(Pais_Origen, -Conteo), 
+                     y = Conteo))+
+  geom_col()
+```
+
+<br>
+<br>
+
+## EDAD
+
+> Aqui vemos el rango de edad de los jugadores
+
+```{r}
+#| fig-cap: Edad
+dfsalariosFut %>% 
+  ggplot(aes(Edad))+
+  geom_histogram(bins = 25)
+
+```
+
+<br>
+<br>
+
+## SALARIOS
+
+Para estudiar los salarios, se realizo la conversion a diferentes tipos de cambio
+
+Se muestran los resultados en peso mexicano (MX), unicameente con el propósito de que las cantidades sean familiares
+
+> Jugador mejor pagado
+
+```{r}
+dfsalariosFut %>% 
+  filter(Salario_mensual_MX==max(Salario_mensual_MX, na.rm = T)) %>% select(Nombre, Salario_mensual_EUR, Salario_mensual_MX) %>% 
+  kbl(format.args = list(big.mark = ','))
+
+
+```
+
+<br>
+<br>
+
+> El "peor pagado"
+
+```{r}
+dfsalariosFut %>% 
+  filter(Salario_mensual_MX==min(Salario_mensual_MX, na.rm = T)) %>% select(Nombre, Salario_mensual_EUR, Salario_mensual_MX) %>% 
+  kbl(format.args = list(big.mark = ','))
+```
+
+
+<br>
+<br>
+
+
+
+> Desviación estándar
+
+```{r}
+#| fig-cap: SD
+sd(dfsalariosFut$Salario_mensual_MX) %>% 
+  tibble("Desviación Estandar"=.) %>% 
+  kbl(format.args = list(big.mark = ','))
+```
+Esto podria sugerir que los salarioss son muy desiguales, asi que veamos
+
+<br>
+<br>
+
+
+> Promedio
+
+```{r}
+#| fig-cap: trim=0
+
+dfsalariosFut$Salario_mensual_MX %>% 
+  mean(na.rm = T)%>% 
+  tibble("Promedio"=.) %>% 
+  kbl(format.args = list(big.mark = ','))
+```
+
+<br>
+<br>
+
+> El promedio ajustado de salario mensual en pesos
+
+```{r}
+#| fig-cap: trim=0.05
+
+dfsalariosFut$Salario_mensual_MX %>% 
+  mean(trim = 0.05, na.rm = T)%>% 
+  tibble("Promedio Ajustado"=.) %>% 
+  kbl(format.args = list(big.mark = ','))
+```
+
+
+### ANALISIS DE DISTRIBUCION
+
+Comportamiento del salario en relacion a los jugadores
+
+```{r}
+#| fig-cap: Densidad Salario
+
+ggplot(dfsalariosFut, aes(Salario_mensual_MX))+
+  geom_density()
+```
+
+
+```{r}
+#| fig-cap: Distribución salario
+ggplot(dfsalariosFut, aes(Salario_mensual_MX))+
+  geom_histogram(bins=25)
+
+```
+
+
+### RESUMEN
+
+> Salario
+
+```{r}
+#| fig-cap: Boxplot Salario
+dfsalariosFut %>% 
+  ggplot(aes(Salario_mensual_MX))+
+  geom_boxplot()
+
+```
+
+
+> Comparación por equipos
+
+```{r}
+#| fig-cap: Boxplot por Equipos
+options(scipen=999)
+
+dfsalariosFut %>% 
+  ggplot(aes(Equipo, Salario_mensual_MX, fill=Equipo))+
+  geom_boxplot()
+
+```
+
+# CONCLUSIÓN
+
+> ____________________________________
+
+
+
+
+

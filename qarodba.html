@@ -1,0 +1,2239 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Abelardo">
+
+<title>Analisis Salarios</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="qarodba_files/libs/clipboard/clipboard.min.js"></script>
+<script src="qarodba_files/libs/quarto-html/quarto.js"></script>
+<script src="qarodba_files/libs/quarto-html/popper.min.js"></script>
+<script src="qarodba_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="qarodba_files/libs/quarto-html/anchor.min.js"></script>
+<link href="qarodba_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="qarodba_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="qarodba_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="qarodba_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="qarodba_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+<script src="qarodba_files/libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="qarodba_files/libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Analisis Salarios</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Abelardo </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="objetivo" class="level2">
+<h2 class="anchored" data-anchor-id="objetivo">Objetivo</h2>
+<p>Comparar datos de los salarios de futbolistas en Europa</p>
+</section>
+<section id="datos" class="level2">
+<h2 class="anchored" data-anchor-id="datos">Datos</h2>
+<p>Mediante web scrapping se recolectaron datos de los salarios de futbolistas en ligas europeas actualizados a la fecha de hoy del sitio web</p>
+<p>www.fichajes.com</p>
+<p>Seguido a eso se exportaron a archivos csv y se estudiaron mediante R.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.2     ✔ readr     2.1.4
+✔ forcats   1.0.0     ✔ stringr   1.5.0
+✔ ggplot2   3.4.3     ✔ tibble    3.2.1
+✔ lubridate 1.9.2     ✔ tidyr     1.3.0
+✔ purrr     1.0.2     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rmarkdown)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DT)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'kableExtra'
+
+The following object is masked from 'package:dplyr':
+
+    group_rows</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>here() starts at C:/Users/abemo/OneDrive/Documentos/GitHub/Dhpc_debate</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">scipen=</span><span class="dv">999</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>dfsalarios <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="fu">here</span>(<span class="st">"Data/SalariosFut.xlsx"</span>), </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>                       <span class="at">col_types =</span> <span class="fu">c</span>(<span class="st">"text"</span>, <span class="st">"text"</span>, <span class="st">"text"</span>, </span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>                                     <span class="st">"date"</span>, <span class="st">"text"</span>))</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>dfsalarios</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 258 × 5
+   JUGADOR          `SALARIO ANUAL` `SALARIO MENSUAL` HASTA               Equipo
+   &lt;chr&gt;            &lt;chr&gt;           &lt;chr&gt;             &lt;dttm&gt;              &lt;chr&gt; 
+ 1 Toni KroosT. Kr… 12,10M          1,01M             2023-06-30 00:00:00 Real …
+ 2 David AlabaD. A… 11,00M          917K              2026-06-30 00:00:00 Real …
+ 3 Luka ModrićL. M… 11,00M          917K              2023-06-30 00:00:00 Real …
+ 4 Antonio Rüdiger… 9,00M           750K              2026-06-30 00:00:00 Real …
+ 5 Thibaut Courtoi… 7,20M           600K              2026-06-30 00:00:00 Real …
+ 6 NachoNacho&nbsp;ESP3… 5,70M           475K              2023-06-30 00:00:00 Real …
+ 7 Daniel Carvajal… 5,00M           417K              2025-06-30 00:00:00 Real …
+ 8 Lucas VázquezLu… 4,50M           375K              2024-06-30 00:00:00 Real …
+ 9 Ferland MendyF.… 4,50M           375K              2025-06-30 00:00:00 Real …
+10 Éder MilitãoÉde… 4,50M           375K              2025-06-30 00:00:00 Real …
+# ℹ 248 more rows</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kbl</span>(dfsalarios)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">JUGADOR</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">SALARIO ANUAL</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">SALARIO MENSUAL</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">HASTA</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Equipo</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Toni KroosT. Kroos&nbsp;DEU33 años</td>
+<td style="text-align: left;">12,10M</td>
+<td style="text-align: left;">1,01M</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Real Madrid</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">David AlabaD. Alaba&nbsp;AUTNGA31 años</td>
+<td style="text-align: left;">11,00M</td>
+<td style="text-align: left;">917K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Real Madrid</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Luka ModrićL. Modrić&nbsp;HRV38 años</td>
+<td style="text-align: left;">11,00M</td>
+<td style="text-align: left;">917K</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Real Madrid</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Antonio RüdigerA. Rüdiger&nbsp;DEUSLE30 años</td>
+<td style="text-align: left;">9,00M</td>
+<td style="text-align: left;">750K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Real Madrid</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Thibaut CourtoisT. Courtois&nbsp;BEL31 años</td>
+<td style="text-align: left;">7,20M</td>
+<td style="text-align: left;">600K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Real Madrid</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NachoNacho&nbsp;ESP33 años</td>
+<td style="text-align: left;">5,70M</td>
+<td style="text-align: left;">475K</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Real Madrid</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Daniel CarvajalDani Carvajal&nbsp;ESP31 años</td>
+<td style="text-align: left;">5,00M</td>
+<td style="text-align: left;">417K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Real Madrid</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Lucas VázquezLucas Vázquez&nbsp;ESP32 años</td>
+<td style="text-align: left;">4,50M</td>
+<td style="text-align: left;">375K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Real Madrid</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Ferland MendyF. Mendy&nbsp;FRASEN28 años</td>
+<td style="text-align: left;">4,50M</td>
+<td style="text-align: left;">375K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Real Madrid</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Éder MilitãoÉder Militão&nbsp;BRAESP25 años</td>
+<td style="text-align: left;">4,50M</td>
+<td style="text-align: left;">375K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Real Madrid</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Eduardo CamavingaE. Camavinga&nbsp;FRACOG20 años</td>
+<td style="text-align: left;">4,00M</td>
+<td style="text-align: left;">333K</td>
+<td style="text-align: left;">2027-06-30</td>
+<td style="text-align: left;">Real Madrid</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Fede ValverdeF. Valverde&nbsp;URYESP25 años</td>
+<td style="text-align: left;">3,90M</td>
+<td style="text-align: left;">325K</td>
+<td style="text-align: left;">2027-06-30</td>
+<td style="text-align: left;">Real Madrid</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">RodrygoRodrygo&nbsp;BRAESP22 años</td>
+<td style="text-align: left;">3,60M</td>
+<td style="text-align: left;">300K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Real Madrid</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Aurélien TchouaméniA. Tchouaméni&nbsp;FRACMR23 años</td>
+<td style="text-align: left;">3,60M</td>
+<td style="text-align: left;">300K</td>
+<td style="text-align: left;">2028-06-30</td>
+<td style="text-align: left;">Real Madrid</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Vinícius JúniorVinícius Júnior&nbsp;BRAESP23 años</td>
+<td style="text-align: left;">3,20M</td>
+<td style="text-align: left;">267K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Real Madrid</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Brahim DíazBrahim Díaz&nbsp;ESPMAR24 años</td>
+<td style="text-align: left;">3,10M</td>
+<td style="text-align: left;">258K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Real Madrid</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Dani CeballosDani Ceballos&nbsp;ESP27 años</td>
+<td style="text-align: left;">2,56M</td>
+<td style="text-align: left;">214K</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Real Madrid</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Andriy LuninA. Lunin&nbsp;UKR24 años</td>
+<td style="text-align: left;">336K</td>
+<td style="text-align: left;">28K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Real Madrid</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Marc-André ter StegenM. ter Stegen&nbsp;DEU31 años</td>
+<td style="text-align: left;">10,60M</td>
+<td style="text-align: left;">883K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Barcelona</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Robert LewandowskiR. Lewandowski&nbsp;POL35 años</td>
+<td style="text-align: left;">10,00M</td>
+<td style="text-align: left;">833K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Barcelona</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Jules KoundéJ. Koundé&nbsp;FRABEN24 años</td>
+<td style="text-align: left;">6,50M</td>
+<td style="text-align: left;">542K</td>
+<td style="text-align: left;">2027-06-30</td>
+<td style="text-align: left;">Barcelona</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">RaphinhaRaphinha&nbsp;BRAITA26 años</td>
+<td style="text-align: left;">6,00M</td>
+<td style="text-align: left;">500K</td>
+<td style="text-align: left;">2027-06-30</td>
+<td style="text-align: left;">Barcelona</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Frenkie de JongF. de Jong&nbsp;NLD26 años</td>
+<td style="text-align: left;">5,80M</td>
+<td style="text-align: left;">483K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Barcelona</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Andreas ChristensenA. Christensen&nbsp;DNK27 años</td>
+<td style="text-align: left;">4,32M</td>
+<td style="text-align: left;">360K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Barcelona</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PedriPedri&nbsp;ESP20 años</td>
+<td style="text-align: left;">3,50M</td>
+<td style="text-align: left;">292K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Barcelona</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Marcos AlonsoMarcos Alonso&nbsp;ESP32 años</td>
+<td style="text-align: left;">3,00M</td>
+<td style="text-align: left;">250K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Barcelona</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Ferran TorresFerran Torres&nbsp;ESP23 años</td>
+<td style="text-align: left;">3,00M</td>
+<td style="text-align: left;">250K</td>
+<td style="text-align: left;">2027-06-30</td>
+<td style="text-align: left;">Barcelona</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Sergi RobertoSergi Roberto&nbsp;ESP31 años</td>
+<td style="text-align: left;">1,73M</td>
+<td style="text-align: left;">144K</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Barcelona</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Lamine Yamal Lamine Yamal&nbsp;ESPMAR16 años</td>
+<td style="text-align: left;">1,44M</td>
+<td style="text-align: left;">120K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Barcelona</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Alejandro BaldeAlejandro Balde&nbsp;ESPDOM19 años</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Barcelona</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Marcus RashfordM. Rashford&nbsp;ENGKNA25 años</td>
+<td style="text-align: left;">12,15M</td>
+<td style="text-align: left;">1,01M</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Manchester United</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Jadon SanchoJ. Sancho&nbsp;ENGTTO23 años</td>
+<td style="text-align: left;">11,93M</td>
+<td style="text-align: left;">995K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Manchester United</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Raphaël Xavier VaraneR. Varane&nbsp;FRAMTQ30 años</td>
+<td style="text-align: left;">11,62M</td>
+<td style="text-align: left;">969K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Manchester United</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Harry MaguireH. Maguire&nbsp;ENG30 años</td>
+<td style="text-align: left;">11,53M</td>
+<td style="text-align: left;">961K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Manchester United</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">CasemiroCasemiro&nbsp;BRAESP31 años</td>
+<td style="text-align: left;">9,94M</td>
+<td style="text-align: left;">828K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Manchester United</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Luke ShawL. Shaw&nbsp;ENG28 años</td>
+<td style="text-align: left;">9,11M</td>
+<td style="text-align: left;">759K</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Manchester United</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Bruno FernandesBruno Fernandes&nbsp;PRT29 años</td>
+<td style="text-align: left;">8,24M</td>
+<td style="text-align: left;">686K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Manchester United</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Victor LindelöfV. Lindelöf&nbsp;SWE29 años</td>
+<td style="text-align: left;">7,29M</td>
+<td style="text-align: left;">607K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Manchester United</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">AntonyAntony&nbsp;BRA23 años</td>
+<td style="text-align: left;">6,63M</td>
+<td style="text-align: left;">552K</td>
+<td style="text-align: left;">2027-06-30</td>
+<td style="text-align: left;">Manchester United</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Aaron Wan-BissakaA. Wan-Bissaka&nbsp;ENGCOD25 años</td>
+<td style="text-align: left;">5,47M</td>
+<td style="text-align: left;">456K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Manchester United</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Christian EriksenC. Eriksen&nbsp;DNK31 años</td>
+<td style="text-align: left;">4,97M</td>
+<td style="text-align: left;">414K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Manchester United</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Lisandro MartínezL. Martínez&nbsp;ARG25 años</td>
+<td style="text-align: left;">3,97M</td>
+<td style="text-align: left;">331K</td>
+<td style="text-align: left;">2027-06-30</td>
+<td style="text-align: left;">Manchester United</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Diogo DalotDiogo Dalot&nbsp;PRT24 años</td>
+<td style="text-align: left;">2,11M</td>
+<td style="text-align: left;">176K</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Manchester United</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Tyrell MalaciaT. Malacia&nbsp;NLDCUW24 años</td>
+<td style="text-align: left;">249K</td>
+<td style="text-align: left;">21K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Manchester United</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Mohamed SalahMohamed Salah&nbsp;EGY31 años</td>
+<td style="text-align: left;">11,64M</td>
+<td style="text-align: left;">970K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Liverpool</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ThiagoThiago Alcântara&nbsp;ESP32 años</td>
+<td style="text-align: left;">11,50M</td>
+<td style="text-align: left;">958K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Liverpool</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Trent Alexander-ArnoldT. Alexander-Arnold&nbsp;ENG25 años</td>
+<td style="text-align: left;">11,21M</td>
+<td style="text-align: left;">934K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Liverpool</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Virgil van DijkV. van Dijk&nbsp;NLDSUR32 años</td>
+<td style="text-align: left;">10,06M</td>
+<td style="text-align: left;">838K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Liverpool</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Alisson BeckerAlisson Becker&nbsp;BRA31 años</td>
+<td style="text-align: left;">9,35M</td>
+<td style="text-align: left;">779K</td>
+<td style="text-align: left;">2027-06-30</td>
+<td style="text-align: left;">Liverpool</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Joël MatipJ. Matip&nbsp;CMR32 años</td>
+<td style="text-align: left;">6,03M</td>
+<td style="text-align: left;">502K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Liverpool</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Darwin NúñezD. Núñez&nbsp;URY24 años</td>
+<td style="text-align: left;">4,63M</td>
+<td style="text-align: left;">386K</td>
+<td style="text-align: left;">2028-06-30</td>
+<td style="text-align: left;">Liverpool</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Cody GakpoC. Gakpo&nbsp;NLDTGO24 años</td>
+<td style="text-align: left;">3,88M</td>
+<td style="text-align: left;">323K</td>
+<td style="text-align: left;">2028-06-30</td>
+<td style="text-align: left;">Liverpool</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Konstantinos TsimikasK. Tsimikas&nbsp;GRC27 años</td>
+<td style="text-align: left;">3,59M</td>
+<td style="text-align: left;">299K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Liverpool</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Luis DíazL. Díaz&nbsp;COL26 años</td>
+<td style="text-align: left;">3,50M</td>
+<td style="text-align: left;">292K</td>
+<td style="text-align: left;">2027-06-30</td>
+<td style="text-align: left;">Liverpool</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Diogo JotaDiogo Jota&nbsp;PRT26 años</td>
+<td style="text-align: left;">2,99M</td>
+<td style="text-align: left;">249K</td>
+<td style="text-align: left;">2027-06-30</td>
+<td style="text-align: left;">Liverpool</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Andrew RobertsonA. Robertson&nbsp;SCO29 años</td>
+<td style="text-align: left;">2,60M</td>
+<td style="text-align: left;">217K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Liverpool</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">AdriánAdrián&nbsp;ESP36 años</td>
+<td style="text-align: left;">1,85M</td>
+<td style="text-align: left;">155K</td>
+<td style="text-align: left;">2021-06-30</td>
+<td style="text-align: left;">Liverpool</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Joe GomezJ. Gomez&nbsp;ENGGMB26 años</td>
+<td style="text-align: left;">1,69M</td>
+<td style="text-align: left;">141K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Liverpool</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Caoimhín KelleherC. Kelleher&nbsp;IRL24 años</td>
+<td style="text-align: left;">927K</td>
+<td style="text-align: left;">77K</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Liverpool</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Harvey ElliottH. Elliott&nbsp;ENG20 años</td>
+<td style="text-align: left;">500K</td>
+<td style="text-align: left;">42K</td>
+<td style="text-align: left;">2027-06-30</td>
+<td style="text-align: left;">Liverpool</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Curtis JonesC. Jones&nbsp;ENG22 años</td>
+<td style="text-align: left;">452K</td>
+<td style="text-align: left;">38K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Liverpool</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Rhys WilliamsR. Williams&nbsp;ENGJAM22 años</td>
+<td style="text-align: left;">171K</td>
+<td style="text-align: left;">14K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Liverpool</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Joshua KimmichJ. Kimmich&nbsp;DEU28 años</td>
+<td style="text-align: left;">11,00M</td>
+<td style="text-align: left;">917K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Bayer Munich</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Thomas MüllerT. Müller&nbsp;DEU34 años</td>
+<td style="text-align: left;">11,00M</td>
+<td style="text-align: left;">917K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Bayer Munich</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Leroy SanéL. Sané&nbsp;DEUFRA27 años</td>
+<td style="text-align: left;">11,00M</td>
+<td style="text-align: left;">917K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Bayer Munich</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Manuel NeuerM. Neuer&nbsp;DEU37 años</td>
+<td style="text-align: left;">11,00M</td>
+<td style="text-align: left;">917K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Bayer Munich</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Dayot UpamecanoD. Upamecano&nbsp;FRAGNB24 años</td>
+<td style="text-align: left;">10,00M</td>
+<td style="text-align: left;">833K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Bayer Munich</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Leon GoretzkaL. Goretzka&nbsp;DEU28 años</td>
+<td style="text-align: left;">9,90M</td>
+<td style="text-align: left;">825K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Bayer Munich</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Kingsley ComanK. Coman&nbsp;FRAGLP27 años</td>
+<td style="text-align: left;">9,35M</td>
+<td style="text-align: left;">779K</td>
+<td style="text-align: left;">2027-06-30</td>
+<td style="text-align: left;">Bayer Munich</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Serge GnabryS. Gnabry&nbsp;DEUCIV28 años</td>
+<td style="text-align: left;">8,55M</td>
+<td style="text-align: left;">713K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Bayer Munich</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Matthijs de LigtM. de Ligt&nbsp;NLD24 años</td>
+<td style="text-align: left;">8,48M</td>
+<td style="text-align: left;">707K</td>
+<td style="text-align: left;">2027-06-30</td>
+<td style="text-align: left;">Bayer Munich</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Noussair MazraouiN. Mazraoui&nbsp;MARNLD25 años</td>
+<td style="text-align: left;">4,24M</td>
+<td style="text-align: left;">353K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Bayer Munich</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Eric Maxim Choupo-MotingE. Choupo-Moting&nbsp;CMRDEU34 años</td>
+<td style="text-align: left;">2,60M</td>
+<td style="text-align: left;">217K</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Bayer Munich</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Mathys Henri TelM. Tel&nbsp;FRAGLP18 años</td>
+<td style="text-align: left;">2,12M</td>
+<td style="text-align: left;">177K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Bayer Munich</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Bouna SarrB. Sarr&nbsp;SENFRA31 años</td>
+<td style="text-align: left;">1,91M</td>
+<td style="text-align: left;">159K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Bayer Munich</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Sven UlreichS. Ulreich&nbsp;DEU35 años</td>
+<td style="text-align: left;">1,40M</td>
+<td style="text-align: left;">117K</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Bayer Munich</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Jamal MusialaJ. Musiala&nbsp;DEUENG20 años</td>
+<td style="text-align: left;">240K</td>
+<td style="text-align: left;">20K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Bayer Munich</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ron HoffmannR. Hoffmann&nbsp;DEU24 años</td>
+<td style="text-align: left;">73K</td>
+<td style="text-align: left;">6K</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Bayer Munich</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Paul PogbaP. Pogba&nbsp;FRAGIN30 años</td>
+<td style="text-align: left;">8,00M</td>
+<td style="text-align: left;">667K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Juventus-fc</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Dušan VlahovićD. Vlahović&nbsp;SRB23 años</td>
+<td style="text-align: left;">7,00M</td>
+<td style="text-align: left;">583K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Juventus-fc</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Adrien RabiotA. Rabiot&nbsp;FRA28 años</td>
+<td style="text-align: left;">7,00M</td>
+<td style="text-align: left;">583K</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Juventus-fc</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Wojciech SzczęsnyW. Szczęsny&nbsp;POL33 años</td>
+<td style="text-align: left;">6,50M</td>
+<td style="text-align: left;">542K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Juventus-fc</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Alex SandroAlex Sandro&nbsp;BRA32 años</td>
+<td style="text-align: left;">6,00M</td>
+<td style="text-align: left;">500K</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Juventus-fc</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Federico ChiesaF. Chiesa&nbsp;ITA25 años</td>
+<td style="text-align: left;">5,00M</td>
+<td style="text-align: left;">417K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Juventus-fc</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BremerBremer&nbsp;BRA26 años</td>
+<td style="text-align: left;">5,00M</td>
+<td style="text-align: left;">417K</td>
+<td style="text-align: left;">2027-06-30</td>
+<td style="text-align: left;">Juventus-fc</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">DaniloDanilo&nbsp;BRA32 años</td>
+<td style="text-align: left;">4,00M</td>
+<td style="text-align: left;">333K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Juventus-fc</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Daniele RuganiD. Rugani&nbsp;ITA29 años</td>
+<td style="text-align: left;">3,50M</td>
+<td style="text-align: left;">292K</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Juventus-fc</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Filip KostićF. Kostić&nbsp;SRB30 años</td>
+<td style="text-align: left;">2,50M</td>
+<td style="text-align: left;">208K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Juventus-fc</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Mattia PerinM. Perin&nbsp;ITA30 años</td>
+<td style="text-align: left;">2,30M</td>
+<td style="text-align: left;">192K</td>
+<td style="text-align: left;">2022-06-30</td>
+<td style="text-align: left;">Juventus-fc</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Mattia De SciglioM. De Sciglio&nbsp;ITA30 años</td>
+<td style="text-align: left;">1,50M</td>
+<td style="text-align: left;">125K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Juventus-fc</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Andrea CambiasoA. Cambiaso&nbsp;ITA23 años</td>
+<td style="text-align: left;">1,00M</td>
+<td style="text-align: left;">83K</td>
+<td style="text-align: left;">2027-06-30</td>
+<td style="text-align: left;">Juventus-fc</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Rolando MandragoraR. Mandragora&nbsp;ITA26 años</td>
+<td style="text-align: left;">600K</td>
+<td style="text-align: left;">50K</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Juventus-fc</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Nicolò FagioliN. Fagioli&nbsp;ITA22 años</td>
+<td style="text-align: left;">540K</td>
+<td style="text-align: left;">45K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Juventus-fc</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Samuel Iling-JuniorS. Iling-Junior&nbsp;ENG20 años</td>
+<td style="text-align: left;">510K</td>
+<td style="text-align: left;">43K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Juventus-fc</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Carlo PinsoglioC. Pinsoglio&nbsp;ITA33 años</td>
+<td style="text-align: left;">300K</td>
+<td style="text-align: left;">25K</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Juventus-fc</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Simone MuratoreS. Muratore&nbsp;ITA25 años</td>
+<td style="text-align: left;">75K</td>
+<td style="text-align: left;">6K</td>
+<td style="text-align: left;">2022-06-30</td>
+<td style="text-align: left;">Juventus-fc</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Franco IsraelF. Israel&nbsp;URYITA23 años</td>
+<td style="text-align: left;">58K</td>
+<td style="text-align: left;">5K</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Juventus-fc</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Giovanni GarofaniG. Garofani&nbsp;ITA20 años</td>
+<td style="text-align: left;">12K</td>
+<td style="text-align: left;">1K</td>
+<td style="text-align: left;">2022-06-30</td>
+<td style="text-align: left;">Juventus-fc</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Fabio MirettiF. Miretti&nbsp;ITA20 años</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Juventus-fc</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Kylian MbappéK. Mbappé&nbsp;FRACMR24 años</td>
+<td style="text-align: left;">46,80M</td>
+<td style="text-align: left;">3,90M</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Psg</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MarquinhosMarquinhos&nbsp;BRAPRT29 años</td>
+<td style="text-align: left;">9,36M</td>
+<td style="text-align: left;">780K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Psg</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Achraf HakimiA. Hakimi&nbsp;MARESP24 años</td>
+<td style="text-align: left;">8,45M</td>
+<td style="text-align: left;">704K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Psg</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Gianluigi DonnarummaG. Donnarumma&nbsp;ITA24 años</td>
+<td style="text-align: left;">7,14M</td>
+<td style="text-align: left;">595K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Psg</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Presnel KimpembeP. Kimpembe&nbsp;FRACOD28 años</td>
+<td style="text-align: left;">5,91M</td>
+<td style="text-align: left;">493K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Psg</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Nordi MukieleN. Mukiele&nbsp;FRACOD25 años</td>
+<td style="text-align: left;">5,46M</td>
+<td style="text-align: left;">455K</td>
+<td style="text-align: left;">2027-06-30</td>
+<td style="text-align: left;">Psg</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Fabián RuizFabián Ruiz&nbsp;ESP27 años</td>
+<td style="text-align: left;">5,00M</td>
+<td style="text-align: left;">417K</td>
+<td style="text-align: left;">2027-06-30</td>
+<td style="text-align: left;">Psg</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Carlos SolerCarlos Soler&nbsp;ESP26 años</td>
+<td style="text-align: left;">3,10M</td>
+<td style="text-align: left;">258K</td>
+<td style="text-align: left;">2027-06-30</td>
+<td style="text-align: left;">Psg</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">VitinhaVitinha&nbsp;PRT23 años</td>
+<td style="text-align: left;">3,00M</td>
+<td style="text-align: left;">250K</td>
+<td style="text-align: left;">2027-06-30</td>
+<td style="text-align: left;">Psg</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Danilo PereiraDanilo Pereira&nbsp;GNBPRT32 años</td>
+<td style="text-align: left;">1,30M</td>
+<td style="text-align: left;">108K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Psg</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Alexandre LetellierA. Letellier&nbsp;FRA32 años</td>
+<td style="text-align: left;">360K</td>
+<td style="text-align: left;">30K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Psg</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Timothée PembéléT. Pembélé&nbsp;FRACOD21 años</td>
+<td style="text-align: left;">300K</td>
+<td style="text-align: left;">25K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Psg</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Nuno MendesNuno Mendes&nbsp;PRT21 años</td>
+<td style="text-align: left;">120K</td>
+<td style="text-align: left;">10K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Psg</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Maxen KapoM. Kapo&nbsp;FRACIV22 años</td>
+<td style="text-align: left;">53K</td>
+<td style="text-align: left;">4K</td>
+<td style="text-align: left;">2022-06-30</td>
+<td style="text-align: left;">Psg</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Kenny NageraK. Nagera&nbsp;FRAGLP21 años</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">2025-05-30</td>
+<td style="text-align: left;">Psg</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Marcin BułkaM. Bułka&nbsp;POL24 años</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Psg</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Theo HernándezT. Hernández&nbsp;FRAESP26 años</td>
+<td style="text-align: left;">4,00M</td>
+<td style="text-align: left;">333K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Ac Milan</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Fikayo TomoriF. Tomori&nbsp;ENGCAN25 años</td>
+<td style="text-align: left;">3,50M</td>
+<td style="text-align: left;">292K</td>
+<td style="text-align: left;">2027-06-30</td>
+<td style="text-align: left;">Ac Milan</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Olivier GiroudO. Giroud&nbsp;FRA37 años</td>
+<td style="text-align: left;">3,50M</td>
+<td style="text-align: left;">292K</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Ac Milan</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Alessandro FlorenziA. Florenzi&nbsp;ITA32 años</td>
+<td style="text-align: left;">3,00M</td>
+<td style="text-align: left;">250K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Ac Milan</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Mike MaignanM. Maignan&nbsp;FRAGUF28 años</td>
+<td style="text-align: left;">2,80M</td>
+<td style="text-align: left;">233K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Ac Milan</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Davide CalabriaD. Calabria&nbsp;ITA26 años</td>
+<td style="text-align: left;">2,60M</td>
+<td style="text-align: left;">217K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Ac Milan</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ismaël BennacerI. Bennacer&nbsp;DZAFRA25 años</td>
+<td style="text-align: left;">1,50M</td>
+<td style="text-align: left;">125K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Ac Milan</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Simon KjærS. Kjær&nbsp;DNK34 años</td>
+<td style="text-align: left;">1,50M</td>
+<td style="text-align: left;">125K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Ac Milan</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Rafael LeãoRafael Leão&nbsp;PRTAGO24 años</td>
+<td style="text-align: left;">1,40M</td>
+<td style="text-align: left;">117K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Ac Milan</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Rade KrunićR. Krunić&nbsp;BIH30 años</td>
+<td style="text-align: left;">1,10M</td>
+<td style="text-align: left;">92K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Ac Milan</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Tommaso PobegaT. Pobega&nbsp;ITA24 años</td>
+<td style="text-align: left;">1,00M</td>
+<td style="text-align: left;">83K</td>
+<td style="text-align: left;">2027-06-30</td>
+<td style="text-align: left;">Ac Milan</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Malick ThiawM. Thiaw&nbsp;DEUFIN22 años</td>
+<td style="text-align: left;">800K</td>
+<td style="text-align: left;">67K</td>
+<td style="text-align: left;">2027-06-30</td>
+<td style="text-align: left;">Ac Milan</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Antonio MiranteA. Mirante&nbsp;ITA40 años</td>
+<td style="text-align: left;">700K</td>
+<td style="text-align: left;">58K</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Ac Milan</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Pierre KaluluP. Kalulu&nbsp;FRACOD23 años</td>
+<td style="text-align: left;">600K</td>
+<td style="text-align: left;">50K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Ac Milan</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Raheem SterlingR. Sterling&nbsp;ENGJAM28 años</td>
+<td style="text-align: left;">10,78M</td>
+<td style="text-align: left;">898K</td>
+<td style="text-align: left;">2027-06-30</td>
+<td style="text-align: left;">Chelsea</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Reece JamesR. James&nbsp;ENGDOM23 años</td>
+<td style="text-align: left;">6,92M</td>
+<td style="text-align: left;">577K</td>
+<td style="text-align: left;">2028-06-30</td>
+<td style="text-align: left;">Chelsea</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Thiago SilvaThiago Silva&nbsp;BRAFRA39 años</td>
+<td style="text-align: left;">6,68M</td>
+<td style="text-align: left;">557K</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Chelsea</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Wesley Tidjan FofanaW. Fofana&nbsp;FRACIV22 años</td>
+<td style="text-align: left;">6,68M</td>
+<td style="text-align: left;">557K</td>
+<td style="text-align: left;">2028-06-30</td>
+<td style="text-align: left;">Chelsea</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ben ChilwellB. Chilwell&nbsp;ENG26 años</td>
+<td style="text-align: left;">6,27M</td>
+<td style="text-align: left;">522K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Chelsea</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Enzo FernándezE. Fernández&nbsp;ARG22 años</td>
+<td style="text-align: left;">5,82M</td>
+<td style="text-align: left;">485K</td>
+<td style="text-align: left;">2031-06-30</td>
+<td style="text-align: left;">Chelsea</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Marc CucurellaMarc Cucurella&nbsp;ESP25 años</td>
+<td style="text-align: left;">5,80M</td>
+<td style="text-align: left;">484K</td>
+<td style="text-align: left;">2028-06-30</td>
+<td style="text-align: left;">Chelsea</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Carney ChukwuemekaC. Chukwuemeka&nbsp;ENGNGA19 años</td>
+<td style="text-align: left;">3,31M</td>
+<td style="text-align: left;">276K</td>
+<td style="text-align: left;">2028-06-30</td>
+<td style="text-align: left;">Chelsea</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Mykhailo MudrykM. Mudryk&nbsp;UKR22 años</td>
+<td style="text-align: left;">3,20M</td>
+<td style="text-align: left;">267K</td>
+<td style="text-align: left;">2031-06-30</td>
+<td style="text-align: left;">Chelsea</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Benoît BadiashileB. Badiashile&nbsp;FRACOD22 años</td>
+<td style="text-align: left;">2,90M</td>
+<td style="text-align: left;">242K</td>
+<td style="text-align: left;">2030-06-30</td>
+<td style="text-align: left;">Chelsea</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Billy GilmourB. Gilmour&nbsp;SCO22 años</td>
+<td style="text-align: left;">2,63M</td>
+<td style="text-align: left;">219K</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Chelsea</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Conor GallagherC. Gallagher&nbsp;ENG23 años</td>
+<td style="text-align: left;">1,66M</td>
+<td style="text-align: left;">138K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Chelsea</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Noni MaduekeN. Madueke&nbsp;ENGNGA21 años</td>
+<td style="text-align: left;">1,62M</td>
+<td style="text-align: left;">135K</td>
+<td style="text-align: left;">2030-06-30</td>
+<td style="text-align: left;">Chelsea</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Armando BrojaA. Broja&nbsp;ALBENG22 años</td>
+<td style="text-align: left;">1,32M</td>
+<td style="text-align: left;">110K</td>
+<td style="text-align: left;">2028-06-30</td>
+<td style="text-align: left;">Chelsea</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Trevoh ChalobahT. Chalobah&nbsp;ENGSLE24 años</td>
+<td style="text-align: left;">1,20M</td>
+<td style="text-align: left;">100K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Chelsea</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Marcus BettinelliM. Bettinelli&nbsp;ENGITA31 años</td>
+<td style="text-align: left;">1,00M</td>
+<td style="text-align: left;">83K</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Chelsea</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Matthew MiazgaM. Miazga&nbsp;USAPOL28 años</td>
+<td style="text-align: left;">936K</td>
+<td style="text-align: left;">78K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Chelsea</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Malo GustoM. Gusto&nbsp;FRAPRT20 años</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">2030-06-30</td>
+<td style="text-align: left;">Chelsea</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Niklas SüleN. Süle&nbsp;DEU28 años</td>
+<td style="text-align: left;">10,00M</td>
+<td style="text-align: left;">833K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Borussia Dortmund</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Mats HummelsM. Hummels&nbsp;DEU34 años</td>
+<td style="text-align: left;">9,97M</td>
+<td style="text-align: left;">831K</td>
+<td style="text-align: left;">2022-06-30</td>
+<td style="text-align: left;">Borussia Dortmund</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Emre CanE. Can&nbsp;DEUTUR29 años</td>
+<td style="text-align: left;">9,25M</td>
+<td style="text-align: left;">771K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Borussia Dortmund</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Julian BrandtJ. Brandt&nbsp;DEU27 años</td>
+<td style="text-align: left;">6,97M</td>
+<td style="text-align: left;">581K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Borussia Dortmund</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Marco ReusM. Reus&nbsp;DEU34 años</td>
+<td style="text-align: left;">6,60M</td>
+<td style="text-align: left;">550K</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Borussia Dortmund</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Youssoufa MoukokoY. Moukoko&nbsp;DEUCMR18 años</td>
+<td style="text-align: left;">6,00M</td>
+<td style="text-align: left;">500K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Borussia Dortmund</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Sébastien HallerS. Haller&nbsp;FRA29 años</td>
+<td style="text-align: left;">5,83M</td>
+<td style="text-align: left;">486K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Borussia Dortmund</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Marius WolfM. Wolf&nbsp;DEU28 años</td>
+<td style="text-align: left;">3,30M</td>
+<td style="text-align: left;">275K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Borussia Dortmund</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Thomas MeunierT. Meunier&nbsp;BEL32 años</td>
+<td style="text-align: left;">3,11M</td>
+<td style="text-align: left;">259K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Borussia Dortmund</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Karim AdeyemiK. Adeyemi&nbsp;DEUNGA21 años</td>
+<td style="text-align: left;">2,65M</td>
+<td style="text-align: left;">221K</td>
+<td style="text-align: left;">2027-06-30</td>
+<td style="text-align: left;">Borussia Dortmund</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Nico SchlotterbeckN. Schlotterbeck&nbsp;DEU23 años</td>
+<td style="text-align: left;">2,50M</td>
+<td style="text-align: left;">208K</td>
+<td style="text-align: left;">2027-06-30</td>
+<td style="text-align: left;">Borussia Dortmund</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Salih ÖzcanS. Özcan&nbsp;TURDEU25 años</td>
+<td style="text-align: left;">2,00M</td>
+<td style="text-align: left;">167K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Borussia Dortmund</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Dan-Axel ZagadouD. Zagadou&nbsp;FRACIV24 años</td>
+<td style="text-align: left;">1,99M</td>
+<td style="text-align: left;">166K</td>
+<td style="text-align: left;">2022-06-30</td>
+<td style="text-align: left;">Borussia Dortmund</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Leonardo BalerdiL. Balerdi&nbsp;ARGITA24 años</td>
+<td style="text-align: left;">1,50M</td>
+<td style="text-align: left;">125K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Borussia Dortmund</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Julian RyersonJ. Ryerson&nbsp;NOR25 años</td>
+<td style="text-align: left;">1,08M</td>
+<td style="text-align: left;">90K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Borussia Dortmund</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Mateu MoreyMateu Morey&nbsp;ESP23 años</td>
+<td style="text-align: left;">996K</td>
+<td style="text-align: left;">83K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Borussia Dortmund</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Gregor KobelG. Kobel&nbsp;CHE25 años</td>
+<td style="text-align: left;">992K</td>
+<td style="text-align: left;">83K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Borussia Dortmund</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Sergio GómezSergio Gómez&nbsp;ESP23 años</td>
+<td style="text-align: left;">798K</td>
+<td style="text-align: left;">67K</td>
+<td style="text-align: left;">2021-06-30</td>
+<td style="text-align: left;">Borussia Dortmund</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Jeremy Isaiah Richard ToljanJ. Toljan&nbsp;DEUUSA29 años</td>
+<td style="text-align: left;">700K</td>
+<td style="text-align: left;">58K</td>
+<td style="text-align: left;">2022-06-30</td>
+<td style="text-align: left;">Borussia Dortmund</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Donyell MalenD. Malen&nbsp;NLDSUR24 años</td>
+<td style="text-align: left;">366K</td>
+<td style="text-align: left;">30K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Borussia Dortmund</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Alexander MeyerA. Meyer&nbsp;DEU32 años</td>
+<td style="text-align: left;">300K</td>
+<td style="text-align: left;">25K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Borussia Dortmund</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Marcel LotkaM. Lotka&nbsp;POL22 años</td>
+<td style="text-align: left;">60K</td>
+<td style="text-align: left;">5K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Borussia Dortmund</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Jamie Bynoe-GittensJ. Bynoe-Gittens&nbsp;ENG19 años</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Borussia Dortmund</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Julien DuranvilleJ. Duranville&nbsp;BEL17 años</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Borussia Dortmund</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">André SchürrleA. Schürrle&nbsp;DEU32 años</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Borussia Dortmund</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">José GayàJosé Gayà&nbsp;ESP28 años</td>
+<td style="text-align: left;">3,29M</td>
+<td style="text-align: left;">274K</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Valencia-Fc</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Jaume DoménechJaume Doménech&nbsp;ESP32 años</td>
+<td style="text-align: left;">1,37M</td>
+<td style="text-align: left;">114K</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Valencia-Fc</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Giorgi MamardashviliG. Mamardashvili&nbsp;GEO23 años</td>
+<td style="text-align: left;">720K</td>
+<td style="text-align: left;">60K</td>
+<td style="text-align: left;">2027-06-30</td>
+<td style="text-align: left;">Valencia-Fc</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Thierry CorreiaThierry Correia&nbsp;PRTCPV24 años</td>
+<td style="text-align: left;">692K</td>
+<td style="text-align: left;">58K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Valencia-Fc</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Hugo GuillamónHugo Guillamón&nbsp;ESP23 años</td>
+<td style="text-align: left;">410K</td>
+<td style="text-align: left;">34K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Valencia-Fc</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Javi GuerraJavi Guerra&nbsp;ESP20 años</td>
+<td style="text-align: left;">190K</td>
+<td style="text-align: left;">16K</td>
+<td style="text-align: left;">2027-06-30</td>
+<td style="text-align: left;">Valencia-Fc</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Ándré AlmeidaAndré Almeida&nbsp;PRT23 años</td>
+<td style="text-align: left;">139K</td>
+<td style="text-align: left;">12K</td>
+<td style="text-align: left;">2028-06-30</td>
+<td style="text-align: left;">Valencia-Fc</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GabrielGabriel Paulista&nbsp;BRAESP32 años</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Valencia-Fc</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Yunus MusahY. Musah&nbsp;USAENG20 años</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Valencia-Fc</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Jan OblakJ. Oblak&nbsp;SVN30 años</td>
+<td style="text-align: left;">11,00M</td>
+<td style="text-align: left;">917K</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Atletico de Madrid</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">KokeKoke&nbsp;ESP31 años</td>
+<td style="text-align: left;">9,50M</td>
+<td style="text-align: left;">792K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Atletico de Madrid</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Saúl ÑíguezSaúl&nbsp;ESP28 años</td>
+<td style="text-align: left;">7,20M</td>
+<td style="text-align: left;">600K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Atletico de Madrid</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Thomas LemarT. Lemar&nbsp;FRAGLP27 años</td>
+<td style="text-align: left;">7,00M</td>
+<td style="text-align: left;">583K</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Atletico de Madrid</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">José María GiménezJ. Giménez&nbsp;URYESP28 años</td>
+<td style="text-align: left;">4,40M</td>
+<td style="text-align: left;">367K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Atletico de Madrid</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Memphis DepayM. Depay&nbsp;NLDGHA29 años</td>
+<td style="text-align: left;">4,20M</td>
+<td style="text-align: left;">350K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Atletico de Madrid</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Stefan SavićS. Savić&nbsp;MNE32 años</td>
+<td style="text-align: left;">4,10M</td>
+<td style="text-align: left;">342K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Atletico de Madrid</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Axel WitselA. Witsel&nbsp;BELMTQ34 años</td>
+<td style="text-align: left;">4,00M</td>
+<td style="text-align: left;">333K</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Atletico de Madrid</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Álvaro MorataÁlvaro Morata&nbsp;ESP30 años</td>
+<td style="text-align: left;">3,60M</td>
+<td style="text-align: left;">300K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Atletico de Madrid</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Rodrigo De PaulR. De Paul&nbsp;ARGITA29 años</td>
+<td style="text-align: left;">3,50M</td>
+<td style="text-align: left;">292K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Atletico de Madrid</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ángel CorreaÁ. Correa&nbsp;ARG28 años</td>
+<td style="text-align: left;">3,40M</td>
+<td style="text-align: left;">283K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Atletico de Madrid</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Marcos LlorenteMarcos Llorente&nbsp;ESP28 años</td>
+<td style="text-align: left;">2,50M</td>
+<td style="text-align: left;">208K</td>
+<td style="text-align: left;">2027-06-30</td>
+<td style="text-align: left;">Atletico de Madrid</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Mario HermosoHermoso&nbsp;ESP28 años</td>
+<td style="text-align: left;">1,00M</td>
+<td style="text-align: left;">83K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Atletico de Madrid</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Reinildo Reinildo&nbsp;MOZ29 años</td>
+<td style="text-align: left;">981K</td>
+<td style="text-align: left;">82K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Atletico de Madrid</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Rodrigo RiquelmeRodrigo Riquelme&nbsp;ESP23 años</td>
+<td style="text-align: left;">344K</td>
+<td style="text-align: left;">29K</td>
+<td style="text-align: left;">2028-06-30</td>
+<td style="text-align: left;">Atletico de Madrid</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Adrián CorralAdrián Corral&nbsp;ESP20 años</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Atletico de Madrid</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Pablo BarriosPablo Barrios&nbsp;ESP20 años</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">2028-06-30</td>
+<td style="text-align: left;">Atletico de Madrid</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Nahuel MolinaN. Molina&nbsp;ARG25 años</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">2027-06-30</td>
+<td style="text-align: left;">Atletico de Madrid</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ivan RakitićI. Rakitić&nbsp;HRVCHE35 años</td>
+<td style="text-align: left;">7,00M</td>
+<td style="text-align: left;">583K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Sevilla FC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SusoSuso&nbsp;ESP29 años</td>
+<td style="text-align: left;">3,50M</td>
+<td style="text-align: left;">292K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Sevilla FC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Erik LamelaE. Lamela&nbsp;ARGESP31 años</td>
+<td style="text-align: left;">3,33M</td>
+<td style="text-align: left;">278K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Sevilla FC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Jesús NavasJesús Navas&nbsp;ESP37 años</td>
+<td style="text-align: left;">2,89M</td>
+<td style="text-align: left;">241K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Sevilla FC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">FernandoFernando&nbsp;BRAPRT36 años</td>
+<td style="text-align: left;">2,80M</td>
+<td style="text-align: left;">233K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Sevilla FC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Sergio RicoSergio Rico&nbsp;ESP30 años</td>
+<td style="text-align: left;">2,60M</td>
+<td style="text-align: left;">217K</td>
+<td style="text-align: left;">2021-06-30</td>
+<td style="text-align: left;">Sevilla FC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Nemanja GudeljN. Gudelj&nbsp;SRBNLD31 años</td>
+<td style="text-align: left;">2,30M</td>
+<td style="text-align: left;">192K</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Sevilla FC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Marcos AcuñaM. Acuña&nbsp;ARG31 años</td>
+<td style="text-align: left;">2,20M</td>
+<td style="text-align: left;">183K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Sevilla FC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Tanguy KouassiT. Nianzou&nbsp;FRACIV21 años</td>
+<td style="text-align: left;">2,00M</td>
+<td style="text-align: left;">167K</td>
+<td style="text-align: left;">2027-06-30</td>
+<td style="text-align: left;">Sevilla FC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MarcãoMarcão&nbsp;BRA27 años</td>
+<td style="text-align: left;">2,00M</td>
+<td style="text-align: left;">167K</td>
+<td style="text-align: left;">2027-06-30</td>
+<td style="text-align: left;">Sevilla FC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Joan JordánJoan Jordán&nbsp;ESP29 años</td>
+<td style="text-align: left;">1,90M</td>
+<td style="text-align: left;">158K</td>
+<td style="text-align: left;">2027-06-30</td>
+<td style="text-align: left;">Sevilla FC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Óliver TorresÓliver Torres&nbsp;ESP28 años</td>
+<td style="text-align: left;">1,20M</td>
+<td style="text-align: left;">100K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Sevilla FC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Youssef En-NesyriY. En-Nesyri&nbsp;MAR26 años</td>
+<td style="text-align: left;">1,20M</td>
+<td style="text-align: left;">100K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Sevilla FC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Marko DmitrovićM. Dmitrović&nbsp;SRB31 años</td>
+<td style="text-align: left;">1,10M</td>
+<td style="text-align: left;">92K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Sevilla FC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Bernd LenoB. Leno&nbsp;DEU31 años</td>
+<td style="text-align: left;">4,48M</td>
+<td style="text-align: left;">374K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Fulham</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Issa DiopI. Diop&nbsp;FRASEN26 años</td>
+<td style="text-align: left;">2,50M</td>
+<td style="text-align: left;">208K</td>
+<td style="text-align: left;">2027-06-30</td>
+<td style="text-align: left;">Fulham</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Saša LukićS. Lukić&nbsp;SRB27 años</td>
+<td style="text-align: left;">2,03M</td>
+<td style="text-align: left;">170K</td>
+<td style="text-align: left;">2027-06-30</td>
+<td style="text-align: left;">Fulham</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Kenny TeteK. Tete&nbsp;NLDMOZ28 años</td>
+<td style="text-align: left;">1,99M</td>
+<td style="text-align: left;">166K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Fulham</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Tom CairneyT. Cairney&nbsp;SCOENG32 años</td>
+<td style="text-align: left;">1,70M</td>
+<td style="text-align: left;">142K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Fulham</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Tosin AdarabioyoT. Adarabioyo&nbsp;ENGNGA26 años</td>
+<td style="text-align: left;">1,70M</td>
+<td style="text-align: left;">142K</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Fulham</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Bobby ReidB. De Cordova-Reid&nbsp;JAMENG30 años</td>
+<td style="text-align: left;">1,70M</td>
+<td style="text-align: left;">142K</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Fulham</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Harrison ReedH. Reed&nbsp;ENG28 años</td>
+<td style="text-align: left;">1,70M</td>
+<td style="text-align: left;">142K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Fulham</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Tim ReamT. Ream&nbsp;USA36 años</td>
+<td style="text-align: left;">1,43M</td>
+<td style="text-align: left;">119K</td>
+<td style="text-align: left;">2021-06-30</td>
+<td style="text-align: left;">Fulham</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">WillianWillian&nbsp;BRA35 años</td>
+<td style="text-align: left;">1,37M</td>
+<td style="text-align: left;">114K</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Fulham</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Andreas PereiraAndreas Pereira&nbsp;BRABEL27 años</td>
+<td style="text-align: left;">1,32M</td>
+<td style="text-align: left;">110K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Fulham</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Antonee RobinsonA. Robinson&nbsp;USAENG26 años</td>
+<td style="text-align: left;">1,14M</td>
+<td style="text-align: left;">95K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Fulham</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Carlos ViníciusCarlos Vinícius&nbsp;BRA28 años</td>
+<td style="text-align: left;">913K</td>
+<td style="text-align: left;">76K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Fulham</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">João PalhinhaJoão Palhinha&nbsp;PRT28 años</td>
+<td style="text-align: left;">682K</td>
+<td style="text-align: left;">57K</td>
+<td style="text-align: left;">2027-06-30</td>
+<td style="text-align: left;">Fulham</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Marek RodákM. Rodák&nbsp;SVK26 años</td>
+<td style="text-align: left;">570K</td>
+<td style="text-align: left;">48K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Fulham</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Abdoulaye DoucouréA. Doucouré&nbsp;MLIFRA30 años</td>
+<td style="text-align: left;">6,83M</td>
+<td style="text-align: left;">569K</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Everton FC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Jordan PickfordJ. Pickford&nbsp;ENG29 años</td>
+<td style="text-align: left;">6,83M</td>
+<td style="text-align: left;">569K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Everton FC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Séamus ColemanS. Coleman&nbsp;IRL35 años</td>
+<td style="text-align: left;">4,00M</td>
+<td style="text-align: left;">333K</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Everton FC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Dominic Calvert-LewinD. Calvert-Lewin&nbsp;ENG26 años</td>
+<td style="text-align: left;">3,98M</td>
+<td style="text-align: left;">332K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Everton FC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Michael KeaneM. Keane&nbsp;ENGIRL30 años</td>
+<td style="text-align: left;">3,98M</td>
+<td style="text-align: left;">332K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Everton FC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ben GodfreyB. Godfrey&nbsp;ENGJAM25 años</td>
+<td style="text-align: left;">3,70M</td>
+<td style="text-align: left;">308K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Everton FC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Vitalii MykolenkoV. Mykolenko&nbsp;UKR24 años</td>
+<td style="text-align: left;">3,34M</td>
+<td style="text-align: left;">278K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Everton FC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Amadou OnanaA. Onana&nbsp;BELSEN22 años</td>
+<td style="text-align: left;">3,31M</td>
+<td style="text-align: left;">276K</td>
+<td style="text-align: left;">2027-06-30</td>
+<td style="text-align: left;">Everton FC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">James TarkowskiJ. Tarkowski&nbsp;ENG30 años</td>
+<td style="text-align: left;">3,31M</td>
+<td style="text-align: left;">276K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Everton FC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Idrissa GueyeI. Gueye&nbsp;SEN34 años</td>
+<td style="text-align: left;">2,65M</td>
+<td style="text-align: left;">221K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Everton FC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Thomas DaviesT. Davies&nbsp;ENG25 años</td>
+<td style="text-align: left;">1,99M</td>
+<td style="text-align: left;">166K</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Everton FC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Nathan PattersonN. Patterson&nbsp;SCO21 años</td>
+<td style="text-align: left;">1,61M</td>
+<td style="text-align: left;">134K</td>
+<td style="text-align: left;">2027-06-30</td>
+<td style="text-align: left;">Everton FC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">James GarnerJ. Garner&nbsp;ENG22 años</td>
+<td style="text-align: left;">996K</td>
+<td style="text-align: left;">83K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Everton FC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Dwight McNeilD. McNeil&nbsp;ENG23 años</td>
+<td style="text-align: left;">834K</td>
+<td style="text-align: left;">70K</td>
+<td style="text-align: left;">2027-06-30</td>
+<td style="text-align: left;">Everton FC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ZankaM. Jørgensen&nbsp;DNKGMB33 años</td>
+<td style="text-align: left;">666K</td>
+<td style="text-align: left;">55K</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Brentford FC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Yoane WissaY. Wissa&nbsp;CODFRA27 años</td>
+<td style="text-align: left;">666K</td>
+<td style="text-align: left;">55K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Brentford FC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Vitaly JaneltV. Janelt&nbsp;DEU25 años</td>
+<td style="text-align: left;">343K</td>
+<td style="text-align: left;">29K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Brentford FC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Thomas StrakoshaT. Strakosha&nbsp;ALB28 años</td>
+<td style="text-align: left;">841K</td>
+<td style="text-align: left;">70K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Brentford FC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Rico Antonio HenryR. Henry&nbsp;ENG26 años</td>
+<td style="text-align: left;">1,17M</td>
+<td style="text-align: left;">97K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Brentford FC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Mikkel DamsgaardM. Damsgaard&nbsp;DNK23 años</td>
+<td style="text-align: left;">996K</td>
+<td style="text-align: left;">83K</td>
+<td style="text-align: left;">2027-06-30</td>
+<td style="text-align: left;">Brentford FC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Mathias JensenM. Jensen&nbsp;DNK27 años</td>
+<td style="text-align: left;">666K</td>
+<td style="text-align: left;">55K</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Brentford FC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Kristoffer AjerK. Ajer&nbsp;NOR25 años</td>
+<td style="text-align: left;">1,30M</td>
+<td style="text-align: left;">108K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Brentford FC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Keane Lewis-PotterK. Lewis-Potter&nbsp;ENG22 años</td>
+<td style="text-align: left;">1,16M</td>
+<td style="text-align: left;">97K</td>
+<td style="text-align: left;">2028-06-30</td>
+<td style="text-align: left;">Brentford FC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Josh DasilvaJ. Dasilva&nbsp;ENG24 años</td>
+<td style="text-align: left;">666K</td>
+<td style="text-align: left;">55K</td>
+<td style="text-align: left;">2023-06-30</td>
+<td style="text-align: left;">Brentford FC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Ivan ToneyI. Toney&nbsp;ENGJAM27 años</td>
+<td style="text-align: left;">666K</td>
+<td style="text-align: left;">55K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Brentford FC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Frank OnyekaF. Onyeka&nbsp;NGA25 años</td>
+<td style="text-align: left;">62K</td>
+<td style="text-align: left;">5K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Brentford FC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Christian NørgaardC. Nørgaard&nbsp;DNK29 años</td>
+<td style="text-align: left;">853K</td>
+<td style="text-align: left;">71K</td>
+<td style="text-align: left;">2025-06-30</td>
+<td style="text-align: left;">Brentford FC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Bryan MbeumoB. Mbeumo&nbsp;CMRFRA24 años</td>
+<td style="text-align: left;">1,23M</td>
+<td style="text-align: left;">103K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Brentford FC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Benjamin Thomas MeeB. Mee&nbsp;ENG34 años</td>
+<td style="text-align: left;">1,82M</td>
+<td style="text-align: left;">152K</td>
+<td style="text-align: left;">2024-06-30</td>
+<td style="text-align: left;">Brentford FC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Aaron HickeyA. Hickey&nbsp;SCO21 años</td>
+<td style="text-align: left;">1,00M</td>
+<td style="text-align: left;">84K</td>
+<td style="text-align: left;">2026-06-30</td>
+<td style="text-align: left;">Brentford FC</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<p>The <code>echo: false</code> option disables the printing of code (only output is displayed).</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

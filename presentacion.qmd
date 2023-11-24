@@ -1,0 +1,142 @@
+---
+title: "Análisis Salarios"
+author: ""
+format: 
+  revealjs:
+    embed-resources: true
+---
+
+
+```{r include=FALSE}
+
+library(readxl)
+library(tidyverse)
+library(kableExtra)
+library(DT)
+
+
+
+options(scipen=999)
+
+
+
+dfsalariosGeneral <- read_csv("Data/SalaryGeneral_Data.csv")
+names(dfsalariosGeneral) <- str_replace(names(dfsalariosGeneral), 
+                                 pattern = " ", replacement = "_")
+
+# View(dfsalariosGeneral)
+
+
+dfsalariosGlobal <- read_csv("Data/salary_Global.csv")
+dfsalariosGlobal <- dfsalariosGlobal %>% 
+  mutate(across(ends_with("salary"), .fns = ~.x * 18.01, .names = "{.col}_{.fn}"))
+# View(dfsalariosGlobal)
+
+
+```
+
+
+
+# Objetivo
+
+## 
+
+- Mostrar datos estadisticos de los salarios de futbolistas
+
+- Comparar estos resultados con los salarios de profesionistas 
+
+# DATOS
+
+## Recolección de los datos
+
+Se recolectaron conjuntos de datos de salarios de futbolistas de ligas europeas, asi como tambien salarios de profesionistas alrededor del mundo
+Todo correspondiente al año 2023
+
+. . .
+
+Fuentes de datos:
+
+- www.fichajes.com
+
+- www.salaryexplorer.com
+
+- www.kaggle.com
+
+## Raw data
+
+. . .
+
+Posteriormente se realizo limpieza y organizacion de los datos para asi poder estudiarlos
+
+```{r}
+#| echo: true
+#| output-location: slide
+
+dfsalarios <- read_excel("Data/SalariosFut.xlsx", 
+                       col_types = c("text", "text", "text", 
+                                     "date", "text"))
+# View(dfsalarios)
+
+
+names(dfsalarios) <- str_replace(names(dfsalarios), 
+                                 pattern = " ", replacement = "_")
+
+dfsalariosFut <-  dfsalarios %>% 
+  mutate(Edad=as.numeric( str_sub(JUGADOR, -7, -6)),
+         NombreyP=str_sub(JUGADOR, 1, -8),
+         Nombre=str_replace(NombreyP, "[A-Z]{3,}", ""),
+         Pais_Origen=str_extract(JUGADOR, "[A-Z]{3,}"),
+         Salario_a=str_replace(str_sub(SALARIO_ANUAL, 1, -2), ",", "."),
+         Factor_anual=ifelse(
+           str_sub(SALARIO_ANUAL, -1)=="M",
+           1000000,
+           1000),
+         Salario_m=str_replace(str_sub(SALARIO_MENSUAL, 1, -2), ",", "."),
+         Factor_mensual=ifelse(
+           str_sub(SALARIO_MENSUAL, -1)=="M",
+           1000000,
+           1000),
+         Salario_anual_EUR=as.numeric(Salario_a)*Factor_anual,
+         Salario_mensual_EUR=as.numeric(Salario_m)*Factor_anual,
+         Salario_mensual_USD=Salario_mensual_EUR*1.05,
+         Salario_mensual_MX=Salario_mensual_EUR*18.87) %>%
+  select(Nombre,Edad, Pais_Origen,Salario_anual_EUR,Salario_mensual_EUR,
+         Salario_mensual_USD, Salario_mensual_MX, Equipo, HASTA)
+
+dfsalariosFut
+  
+```
+
+## Conjunto de datos {.scrollabe}
+
+```{r}
+
+datatable(dfsalariosFut)
+```
+
+## 
+
+Veamos algunos números
+
+
+
+## prueba
+
+```{r}
+#| echo: true
+#| output-location: slide
+
+ggplot(airquality, aes(Temp, Ozone)) + 
+  geom_point() + 
+  geom_smooth(method = "loess")
+```
+
+## Resumen
+
+. . .
+
+```{r}
+kbl(summary(dfsalariosFut))
+```
+
+
