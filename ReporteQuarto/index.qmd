@@ -1,5 +1,6 @@
 ---
 title: "Analisis Salarios"
+image: "BUAP-logo.png"
 author: 
   [Abelardo Morales]
 date-modified: 16-Octubre-2023
@@ -46,13 +47,13 @@ knitr:
 
 # DATOS
 
-Mediante web scrapping se recolectaron datos de los salarios de futbolistas en ligas europeas actualizados a la fecha de hoy de los sitios:
+Mediante técnicas de web scrapping se recolectaron datos de los salarios de futbolistas en ligas europeas actualizados a la fecha de hoy de los sitios:
 
 * <https://www.fichajes.com/>
 * <https://www.kaggle.com/>
 * <https://www.salaryexplorer.com/>
 
-Seguido a eso se exportaron a archivos csv y se estudiaron mediante R.
+Seguido a eso se exportaron a archivos csv y se estudiaron mediante R. 
 
 ```{r}
 
