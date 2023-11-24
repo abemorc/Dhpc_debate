@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Abelardo Morales">
+<meta name="author" content="Omar Zabdiel">
+<meta name="author" content="Héctor Rebolledo">
+<meta name="author" content="Sergio Moyotl">
+<meta name="author" content="Fernando Rivera">
+<meta name="dcterms.date" content="2023-10-10">
+<meta name="keywords" content="R">
+
+<title>Analisis Salarios</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="qarodba_files/libs/clipboard/clipboard.min.js"></script>
+<script src="qarodba_files/libs/quarto-html/quarto.js"></script>
+<script src="qarodba_files/libs/quarto-html/popper.min.js"></script>
+<script src="qarodba_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="qarodba_files/libs/quarto-html/anchor.min.js"></script>
+<link href="qarodba_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="qarodba_files/libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="qarodba_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="qarodba_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="qarodba_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="dark">
+<style>html{ scroll-behavior: smooth; }</style>
+<script async="" src="https://hypothes.is/embed.js"></script>
+
+<script src="qarodba_files/libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="qarodba_files/libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+
+</head>
+
+<body>
+
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <div class="quarto-title-block"><div><h1 class="title">Analisis Salarios</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i></button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li></ul></div></div>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Authors</div>
+      <div class="quarto-title-meta-contents">
+               <p>Abelardo Morales </p>
+               <p>Omar Zabdiel </p>
+               <p>Héctor Rebolledo </p>
+               <p>Sergio Moyotl </p>
+               <p>Fernando Rivera </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">October 10, 2023</p>
+      </div>
+    </div>
+    
+      <div>
+      <div class="quarto-title-meta-heading">Modified</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date-modified">October 16, 2023</p>
+      </div>
+    </div>
+      
+    </div>
+    
+  <div>
+    <div class="abstract">
+      <div class="abstract-title">Abstract</div>
+      Resumen de salarios de futbolistas en ligas europeas
+    </div>
+  </div>
+  
+  </header><div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="99">
+    <h2 id="toc-title">Código</h2>
+   
+  <ul>
+  <li><a href="#datos" id="toc-datos" class="nav-link active" data-scroll-target="#datos"><span class="header-section-number">1</span> DATOS</a></li>
+  <li><a href="#analisis" id="toc-analisis" class="nav-link" data-scroll-target="#analisis"><span class="header-section-number">2</span> ANALISIS</a>
+  <ul class="collapse">
+  <li><a href="#equipos" id="toc-equipos" class="nav-link" data-scroll-target="#equipos"><span class="header-section-number">2.1</span> EQUIPOS</a></li>
+  <li><a href="#pais-de-origen" id="toc-pais-de-origen" class="nav-link" data-scroll-target="#pais-de-origen"><span class="header-section-number">2.2</span> PAIS DE ORIGEN</a></li>
+  <li><a href="#edad" id="toc-edad" class="nav-link" data-scroll-target="#edad"><span class="header-section-number">2.3</span> EDAD</a></li>
+  <li><a href="#salarios" id="toc-salarios" class="nav-link" data-scroll-target="#salarios"><span class="header-section-number">2.4</span> SALARIOS</a>
+  <ul class="collapse">
+  <li><a href="#analisis-de-distribucion" id="toc-analisis-de-distribucion" class="nav-link" data-scroll-target="#analisis-de-distribucion"><span class="header-section-number">2.4.1</span> ANALISIS DE DISTRIBUCION</a></li>
+  <li><a href="#resumen" id="toc-resumen" class="nav-link" data-scroll-target="#resumen"><span class="header-section-number">2.4.2</span> RESUMEN</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#conclusión" id="toc-conclusión" class="nav-link" data-scroll-target="#conclusión"><span class="header-section-number">3</span> CONCLUSIÓN</a></li>
+  </ul>
+</nav>
+</div>
+<main class="content quarto-banner-title-block page-columns page-full" id="quarto-document-content">
+
+
+
+
+<section id="datos" class="level1 page-columns page-full" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> DATOS</h1>
+<p>Mediante web scrapping se recolectaron datos de los salarios de futbolistas en ligas europeas actualizados a la fecha de hoy de los sitios:</p>
+<p><a href="https://www.fichajes.com/" class="uri">https://www.fichajes.com/</a> <a href="https://www.kaggle.com/" class="uri">https://www.kaggle.com/</a> <a href="https://www.salaryexplorer.com/" class="uri">https://www.salaryexplorer.com/</a></p>
+<p>Seguido a eso se exportaron a archivos csv y se estudiaron mediante R.</p>
+<div class="cell" data-hash="qarodba_cache/html/unnamed-chunk-1_e6d7177be14e4c8dff81a540a9d37afb">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rmarkdown)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DT)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rstatix)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggpubr)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">scipen=</span><span class="dv">999</span>)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>dfsalarios <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="fu">here</span>(<span class="st">"Data/SalariosFut.xlsx"</span>), </span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>                       <span class="at">col_types =</span> <span class="fu">c</span>(<span class="st">"text"</span>, <span class="st">"text"</span>, <span class="st">"text"</span>, </span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>                                     <span class="st">"date"</span>, <span class="st">"text"</span>))</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>dfsalarios</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 258 × 5</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="do">##    JUGADOR          `SALARIO ANUAL` `SALARIO MENSUAL` HASTA               Equipo</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="do">##    &lt;chr&gt;            &lt;chr&gt;           &lt;chr&gt;             &lt;dttm&gt;              &lt;chr&gt; </span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="do">##  1 Toni KroosT. Kr… 12,10M          1,01M             2023-06-30 00:00:00 Real …</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="do">##  2 David AlabaD. A… 11,00M          917K              2026-06-30 00:00:00 Real …</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="do">##  3 Luka ModrićL. M… 11,00M          917K              2023-06-30 00:00:00 Real …</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="do">##  4 Antonio Rüdiger… 9,00M           750K              2026-06-30 00:00:00 Real …</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="do">##  5 Thibaut Courtoi… 7,20M           600K              2026-06-30 00:00:00 Real …</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="do">##  6 NachoNacho&nbsp;ESP3… 5,70M           475K              2023-06-30 00:00:00 Real …</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="do">##  7 Daniel Carvajal… 5,00M           417K              2025-06-30 00:00:00 Real …</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="do">##  8 Lucas VázquezLu… 4,50M           375K              2024-06-30 00:00:00 Real …</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="do">##  9 Ferland MendyF.… 4,50M           375K              2025-06-30 00:00:00 Real …</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 Éder MilitãoÉde… 4,50M           375K              2025-06-30 00:00:00 Real …</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="do">## # ℹ 248 more rows</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell page-columns page-full" data-hash="qarodba_cache/html/unnamed-chunk-2_23b8a7c1847b572f4f31790908974ae6">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kbl</span>(<span class="fu">head</span>(dfsalarios[,<span class="sc">-</span><span class="dv">4</span>], <span class="dv">15</span>), <span class="at">align =</span> <span class="st">"c"</span>, <span class="at">longtable =</span> T) <span class="sc">%&gt;%</span> <span class="fu">kable_material_dark</span>(<span class="at">full_width=</span>T)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display column-page">
+<table class="lightable-material-dark table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: center;" data-quarto-table-cell-role="th">JUGADOR</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">SALARIO ANUAL</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">SALARIO MENSUAL</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Equipo</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">Toni KroosT. Kroos&nbsp;DEU33 años</td>
+<td style="text-align: center;">12,10M</td>
+<td style="text-align: center;">1,01M</td>
+<td style="text-align: center;">Real Madrid</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">David AlabaD. Alaba&nbsp;AUTNGA31 años</td>
+<td style="text-align: center;">11,00M</td>
+<td style="text-align: center;">917K</td>
+<td style="text-align: center;">Real Madrid</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Luka ModrićL. Modrić&nbsp;HRV38 años</td>
+<td style="text-align: center;">11,00M</td>
+<td style="text-align: center;">917K</td>
+<td style="text-align: center;">Real Madrid</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Antonio RüdigerA. Rüdiger&nbsp;DEUSLE30 años</td>
+<td style="text-align: center;">9,00M</td>
+<td style="text-align: center;">750K</td>
+<td style="text-align: center;">Real Madrid</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Thibaut CourtoisT. Courtois&nbsp;BEL31 años</td>
+<td style="text-align: center;">7,20M</td>
+<td style="text-align: center;">600K</td>
+<td style="text-align: center;">Real Madrid</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">NachoNacho&nbsp;ESP33 años</td>
+<td style="text-align: center;">5,70M</td>
+<td style="text-align: center;">475K</td>
+<td style="text-align: center;">Real Madrid</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Daniel CarvajalDani Carvajal&nbsp;ESP31 años</td>
+<td style="text-align: center;">5,00M</td>
+<td style="text-align: center;">417K</td>
+<td style="text-align: center;">Real Madrid</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Lucas VázquezLucas Vázquez&nbsp;ESP32 años</td>
+<td style="text-align: center;">4,50M</td>
+<td style="text-align: center;">375K</td>
+<td style="text-align: center;">Real Madrid</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Ferland MendyF. Mendy&nbsp;FRASEN28 años</td>
+<td style="text-align: center;">4,50M</td>
+<td style="text-align: center;">375K</td>
+<td style="text-align: center;">Real Madrid</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Éder MilitãoÉder Militão&nbsp;BRAESP25 años</td>
+<td style="text-align: center;">4,50M</td>
+<td style="text-align: center;">375K</td>
+<td style="text-align: center;">Real Madrid</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Eduardo CamavingaE. Camavinga&nbsp;FRACOG20 años</td>
+<td style="text-align: center;">4,00M</td>
+<td style="text-align: center;">333K</td>
+<td style="text-align: center;">Real Madrid</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Fede ValverdeF. Valverde&nbsp;URYESP25 años</td>
+<td style="text-align: center;">3,90M</td>
+<td style="text-align: center;">325K</td>
+<td style="text-align: center;">Real Madrid</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">RodrygoRodrygo&nbsp;BRAESP22 años</td>
+<td style="text-align: center;">3,60M</td>
+<td style="text-align: center;">300K</td>
+<td style="text-align: center;">Real Madrid</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Aurélien TchouaméniA. Tchouaméni&nbsp;FRACMR23 años</td>
+<td style="text-align: center;">3,60M</td>
+<td style="text-align: center;">300K</td>
+<td style="text-align: center;">Real Madrid</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Vinícius JúniorVinícius Júnior&nbsp;BRAESP23 años</td>
+<td style="text-align: center;">3,20M</td>
+<td style="text-align: center;">267K</td>
+<td style="text-align: center;">Real Madrid</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<p>Debido a la forma en como se recolectaron los datos, fue necesario hacer “limpieza” de los mismos</p>
+<div class="cell" data-hash="qarodba_cache/html/unnamed-chunk-3_a71d7151855b11e9163d871dfddfc312">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(dfsalarios) <span class="ot">&lt;-</span> <span class="fu">str_replace</span>(<span class="fu">names</span>(dfsalarios), </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">pattern =</span> <span class="st">" "</span>, <span class="at">replacement =</span> <span class="st">"_"</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>dfsalariosFut <span class="ot">&lt;-</span>  dfsalarios <span class="sc">%&gt;%</span> </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Edad=</span><span class="fu">as.numeric</span>( <span class="fu">str_sub</span>(JUGADOR, <span class="sc">-</span><span class="dv">7</span>, <span class="sc">-</span><span class="dv">6</span>)),</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">NombreyP=</span><span class="fu">str_sub</span>(JUGADOR, <span class="dv">1</span>, <span class="sc">-</span><span class="dv">8</span>),</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">Nombre=</span><span class="fu">str_replace</span>(NombreyP, <span class="st">"[A-Z]{3,}"</span>, <span class="st">""</span>),</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">Pais_Origen=</span><span class="fu">str_extract</span>(JUGADOR, <span class="st">"[A-Z]{3,}"</span>),</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">Salario_a=</span><span class="fu">str_replace</span>(<span class="fu">str_sub</span>(SALARIO_ANUAL, <span class="dv">1</span>, <span class="sc">-</span><span class="dv">2</span>), <span class="st">","</span>, <span class="st">"."</span>),</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">Factor_anual=</span><span class="fu">ifelse</span>(</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>           <span class="fu">str_sub</span>(SALARIO_ANUAL, <span class="sc">-</span><span class="dv">1</span>)<span class="sc">==</span><span class="st">"M"</span>,</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>           <span class="dv">1000000</span>,</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>           <span class="dv">1000</span>),</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>         <span class="at">Salario_m=</span><span class="fu">str_replace</span>(<span class="fu">str_sub</span>(SALARIO_MENSUAL, <span class="dv">1</span>, <span class="sc">-</span><span class="dv">2</span>), <span class="st">","</span>, <span class="st">"."</span>),</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>         <span class="at">Factor_mensual=</span><span class="fu">ifelse</span>(</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>           <span class="fu">str_sub</span>(SALARIO_MENSUAL, <span class="sc">-</span><span class="dv">1</span>)<span class="sc">==</span><span class="st">"M"</span>,</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>           <span class="dv">1000000</span>,</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>           <span class="dv">1000</span>),</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>         <span class="at">Salario_anual_EUR=</span><span class="fu">as.numeric</span>(Salario_a)<span class="sc">*</span>Factor_anual,</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>         <span class="at">Salario_mensual_EUR=</span><span class="fu">as.numeric</span>(Salario_m)<span class="sc">*</span>Factor_mensual,</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>         <span class="at">Salario_mensual_USD=</span>Salario_mensual_EUR<span class="sc">*</span><span class="fl">1.05</span>,</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>         <span class="at">Salario_mensual_MX=</span>Salario_mensual_EUR<span class="sc">*</span><span class="fl">18.87</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Nombre,Edad, Pais_Origen,Salario_anual_EUR,Salario_mensual_EUR,</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>         Salario_mensual_USD, Salario_mensual_MX, </span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>         Equipo, HASTA) <span class="sc">%&gt;%</span> </span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">na.omit</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>()</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>dfsalariosFut</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 245 × 9</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="do">##    Nombre                 Edad Pais_Origen Salario_anual_EUR Salario_mensual_EUR</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="do">##    &lt;chr&gt;                 &lt;dbl&gt; &lt;chr&gt;                   &lt;dbl&gt;               &lt;dbl&gt;</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="do">##  1 Toni KroosT. Kroos&nbsp;      33 DEU                  12100000             1010000</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a><span class="do">##  2 David AlabaD. Alaba&nbsp;     31 AUTNGA               11000000              917000</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a><span class="do">##  3 Luka ModrićL. Modrić&nbsp;    38 HRV                  11000000              917000</span></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a><span class="do">##  4 Antonio RüdigerA. Rü…    30 DEUSLE                9000000              750000</span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a><span class="do">##  5 Thibaut CourtoisT. C…    31 BEL                   7200000              600000</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a><span class="do">##  6 NachoNacho&nbsp;              33 ESP                   5700000              475000</span></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a><span class="do">##  7 Daniel CarvajalDani …    31 ESP                   5000000              417000</span></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a><span class="do">##  8 Lucas VázquezLucas V…    32 ESP                   4500000              375000</span></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a><span class="do">##  9 Ferland MendyF. Mend…    28 FRASEN                4500000              375000</span></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 Éder MilitãoÉder Mil…    25 BRAESP                4500000              375000</span></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a><span class="do">## # ℹ 235 more rows</span></span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a><span class="do">## # ℹ 4 more variables: Salario_mensual_USD &lt;dbl&gt;, Salario_mensual_MX &lt;dbl&gt;,</span></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a><span class="do">## #   Equipo &lt;chr&gt;, HASTA &lt;dttm&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><br> <br></p>
+</section>
+<section id="analisis" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> ANALISIS</h1>
+<p>Ya con los datos en limpio, podemos obtener información acerca de estos</p>
+<blockquote class="blockquote">
+<p>Resumen</p>
+</blockquote>
+<div class="cell" data-hash="qarodba_cache/html/unnamed-chunk-4_95482b205d9b6a0c48abb7733a7d8b63">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>dfsalariosFut <span class="sc">%&gt;%</span> <span class="fu">summary</span>()</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="do">##     Nombre               Edad       Pais_Origen        Salario_anual_EUR </span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="do">##  Length:245         Min.   :16.00   Length:245         Min.   :   12000  </span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="do">##  Class :character   1st Qu.:24.00   Class :character   1st Qu.: 1160000  </span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="do">##  Mode  :character   Median :27.00   Mode  :character   Median : 2990000  </span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="do">##                     Mean   :27.15                      Mean   : 3987796  </span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="do">##                     3rd Qu.:30.00                      3rd Qu.: 5830000  </span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="do">##                     Max.   :40.00                      Max.   :46800000  </span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  Salario_mensual_EUR Salario_mensual_USD Salario_mensual_MX    Equipo         </span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  Min.   :   1000     Min.   :   1050     Min.   :   18870   Length:245        </span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  1st Qu.:  97000     1st Qu.: 101850     1st Qu.: 1830390   Class :character  </span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  Median : 249000     Median : 261450     Median : 4698630   Mode  :character  </span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  Mean   : 332351     Mean   : 348969     Mean   : 6271464                     </span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  3rd Qu.: 486000     3rd Qu.: 510300     3rd Qu.: 9170820                     </span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="do">##  Max.   :3900000     Max.   :4095000     Max.   :73593000                     </span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="do">##      HASTA                       </span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="do">##  Min.   :2021-06-30 00:00:00.00  </span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="do">##  1st Qu.:2024-06-30 00:00:00.00  </span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="do">##  Median :2025-06-30 00:00:00.00  </span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="do">##  Mean   :2025-07-31 03:25:42.85  </span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="do">##  3rd Qu.:2026-06-30 00:00:00.00  </span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="do">##  Max.   :2031-06-30 00:00:00.00</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><br> <br></p>
+<div style="page-break-after: always;"></div>
+<section id="equipos" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="equipos"><span class="header-section-number">2.1</span> EQUIPOS</h2>
+<p>Se utilizaron datos de los siguientes equipos:</p>
+<blockquote class="blockquote">
+<p>Clubes de futbol</p>
+</blockquote>
+<div class="cell" data-hash="qarodba_cache/html/unnamed-chunk-5_2cff132cf31a2e59603285dcc5904aa1">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(dfsalariosFut<span class="sc">$</span>Equipo)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="do">##  [1] "Real Madrid"        "Barcelona"          "Manchester United" </span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="do">##  [4] "Liverpool"          "Bayer Munich"       "Juventus-fc"       </span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="do">##  [7] "Psg"                "Ac Milan"           "Chelsea"           </span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="do">## [10] "Borussia Dortmund"  "Valencia-Fc"        "Atletico de Madrid"</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="do">## [13] "Sevilla FC"         "Fulham"             "Everton FC"        </span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="do">## [16] "Brentford FC"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><br> <br></p>
+</section>
+<section id="pais-de-origen" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="pais-de-origen"><span class="header-section-number">2.2</span> PAIS DE ORIGEN</h2>
+<blockquote class="blockquote">
+<p>Pais de origen de los jugadores</p>
+</blockquote>
+<div class="cell" data-hash="qarodba_cache/html/unnamed-chunk-6_76b49eb1f18c95029bb27bea88886215">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(dfsalariosFut<span class="sc">$</span>Pais_Origen) </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="do">##   [1] "DEU"    "AUTNGA" "HRV"    "DEUSLE" "BEL"    "ESP"    "FRASEN" "BRAESP"</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="do">##   [9] "FRACOG" "URYESP" "FRACMR" "ESPMAR" "UKR"    "POL"    "FRABEN" "BRAITA"</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="do">##  [17] "NLD"    "DNK"    "ESPDOM" "ENGKNA" "ENGTTO" "FRAMTQ" "ENG"    "PRT"   </span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="do">##  [25] "SWE"    "BRA"    "ENGCOD" "ARG"    "NLDCUW" "EGY"    "NLDSUR" "CMR"   </span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  [33] "URY"    "NLDTGO" "GRC"    "COL"    "SCO"    "ENGGMB" "IRL"    "ENGJAM"</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  [41] "DEUFRA" "FRAGNB" "FRAGLP" "DEUCIV" "MARNLD" "CMRDEU" "SENFRA" "DEUENG"</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  [49] "FRAGIN" "SRB"    "FRA"    "ITA"    "URYITA" "BRAPRT" "MARESP" "FRACOD"</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  [57] "GNBPRT" "FRACIV" "FRAESP" "ENGCAN" "FRAGUF" "DZAFRA" "PRTAGO" "BIH"   </span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  [65] "DEUFIN" "ENGDOM" "BRAFRA" "ENGNGA" "ALBENG" "ENGSLE" "ENGITA" "USAPOL"</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  [73] "FRAPRT" "DEUTUR" "DEUCMR" "DEUNGA" "TURDEU" "ARGITA" "NOR"    "CHE"   </span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  [81] "DEUUSA" "GEO"    "PRTCPV" "USAENG" "SVN"    "NLDGHA" "MNE"    "BELMTQ"</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  [89] "MOZ"    "HRVCHE" "ARGESP" "SRBNLD" "MAR"    "NLDMOZ" "SCOENG" "JAMENG"</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  [97] "USA"    "BRABEL" "SVK"    "MLIFRA" "ENGIRL" "BELSEN" "SEN"    "DNKGMB"</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="do">## [105] "CODFRA" "ALB"    "NGA"    "CMRFRA"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<blockquote class="blockquote">
+<p>Resumen país de origen</p>
+</blockquote>
+<div class="cell" data-hash="qarodba_cache/html/unnamed-chunk-7_2c73b73a85cadfb730f9cfbf94d5c6e0">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>fut_pais <span class="ot">&lt;-</span> dfsalariosFut <span class="sc">%&gt;%</span> </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Pais_Origen) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">Conteo=</span><span class="fu">n</span>()) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(Conteo))</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Pais de origen de los jugadores ordenados de mayor a menor</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="fu">kbl</span>(<span class="fu">head</span>(fut_pais, <span class="dv">15</span>), <span class="at">align =</span> <span class="st">"c"</span>) <span class="sc">%&gt;%</span> <span class="fu">kable_material_dark</span>(<span class="at">full_width=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="lightable-material-dark table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: center;" data-quarto-table-cell-role="th">Pais_Origen</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Conteo</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">ESP</td>
+<td style="text-align: center;">30</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">ENG</td>
+<td style="text-align: center;">19</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">DEU</td>
+<td style="text-align: center;">17</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">ITA</td>
+<td style="text-align: center;">15</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">BRA</td>
+<td style="text-align: center;">8</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">PRT</td>
+<td style="text-align: center;">7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">DNK</td>
+<td style="text-align: center;">6</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">FRACOD</td>
+<td style="text-align: center;">5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">ARG</td>
+<td style="text-align: center;">4</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">BRAESP</td>
+<td style="text-align: center;">4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">ENGJAM</td>
+<td style="text-align: center;">4</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">FRA</td>
+<td style="text-align: center;">4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">FRACIV</td>
+<td style="text-align: center;">4</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">SCO</td>
+<td style="text-align: center;">4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">SRB</td>
+<td style="text-align: center;">4</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<p>Podemos ver de donde provienen la mayoria de jugadores de estas ligas</p>
+<div class="cell" data-hash="qarodba_cache/html/unnamed-chunk-8_76957d5ee8f24e13b3f59cb370e979fe">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">head</span>(fut_pais, <span class="at">n =</span> <span class="dv">12</span>), <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> Pais_Origen, <span class="at">y =</span> Conteo))<span class="sc">+</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Pais origen</figcaption>
+<p><img src="qarodba_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell" data-hash="qarodba_cache/html/unnamed-chunk-9_0cb7118c426096fe5ead8f3929b28c3c">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">head</span>(fut_pais, <span class="at">n =</span> <span class="dv">12</span>), </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>       <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(Pais_Origen, <span class="sc">-</span>Conteo), </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                     <span class="at">y =</span> Conteo))<span class="sc">+</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Pais-origen</figcaption>
+<p><img src="qarodba_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><br> <br></p>
+</section>
+<section id="edad" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="edad"><span class="header-section-number">2.3</span> EDAD</h2>
+<blockquote class="blockquote">
+<p>Aqui vemos el rango de edad de los jugadores</p>
+</blockquote>
+<div class="cell" data-hash="qarodba_cache/html/unnamed-chunk-10_57da7a6d85aae852ab664e8afbda5046">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>dfsalariosFut <span class="sc">%&gt;%</span> </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(Edad))<span class="sc">+</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">25</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Edad</figcaption>
+<p><img src="qarodba_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><br> <br></p>
+</section>
+<section id="salarios" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="salarios"><span class="header-section-number">2.4</span> SALARIOS</h2>
+<p>Para estudiar los salarios, se realizo la conversion a diferentes tipos de cambio</p>
+<p>Se muestran los resultados en peso mexicano (MX), unicameente con el propósito de que las cantidades sean familiares</p>
+<blockquote class="blockquote">
+<p>Jugador mejor pagado</p>
+</blockquote>
+<div class="cell" data-hash="qarodba_cache/html/unnamed-chunk-11_787793d90349006891f070cbd4955eba">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>dfsalariosFut <span class="sc">%&gt;%</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Salario_mensual_MX<span class="sc">==</span><span class="fu">max</span>(Salario_mensual_MX, <span class="at">na.rm =</span> T)) <span class="sc">%&gt;%</span> <span class="fu">select</span>(Nombre, Salario_mensual_EUR, Salario_mensual_MX) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>(<span class="at">format.args =</span> <span class="fu">list</span>(<span class="at">big.mark =</span> <span class="st">','</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Nombre</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Salario_mensual_EUR</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Salario_mensual_MX</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Kylian MbappéK. Mbappé&nbsp;</td>
+<td style="text-align: right;">3,900,000</td>
+<td style="text-align: right;">73,593,000</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<p><br> <br></p>
+<blockquote class="blockquote">
+<p>El “peor pagado”</p>
+</blockquote>
+<div class="cell" data-hash="qarodba_cache/html/unnamed-chunk-12_ba0c90b25d4c725e590ec03a0a409290">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>dfsalariosFut <span class="sc">%&gt;%</span> </span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Salario_mensual_MX<span class="sc">==</span><span class="fu">min</span>(Salario_mensual_MX, <span class="at">na.rm =</span> T)) <span class="sc">%&gt;%</span> <span class="fu">select</span>(Nombre, Salario_mensual_EUR, Salario_mensual_MX) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>(<span class="at">format.args =</span> <span class="fu">list</span>(<span class="at">big.mark =</span> <span class="st">','</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Nombre</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Salario_mensual_EUR</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Salario_mensual_MX</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Giovanni GarofaniG. Garofani&nbsp;</td>
+<td style="text-align: right;">1,000</td>
+<td style="text-align: right;">18,870</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<p><br> <br></p>
+<blockquote class="blockquote">
+<p>Desviación estándar</p>
+</blockquote>
+<div class="cell" data-hash="qarodba_cache/html/unnamed-chunk-13_3b7c0c41a051bf490fab2d824996e717">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sd</span>(dfsalariosFut<span class="sc">$</span>Salario_mensual_MX) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="st">"Desviación Estandar"</span><span class="ot">=</span>.) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>(<span class="at">format.args =</span> <span class="fu">list</span>(<span class="at">big.mark =</span> <span class="st">','</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+
+<table>
+<thead>
+<tr>
+<th style="text-align:right;">
+Desviación Estandar
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+6,748,445
+</td>
+</tr>
+</tbody>
+
+</table>
+<p>SD</p>
+</div>
+</div>
+<p>Esto podria sugerir que los salarioss son muy desiguales, asi que veamos</p>
+<p><br> <br></p>
+<blockquote class="blockquote">
+<p>Promedio</p>
+</blockquote>
+<div class="cell" data-hash="qarodba_cache/html/unnamed-chunk-14_cbc62ce9272f679d543ca8b707382564">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>dfsalariosFut<span class="sc">$</span>Salario_mensual_MX <span class="sc">%&gt;%</span> </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mean</span>(<span class="at">na.rm =</span> T)<span class="sc">%&gt;%</span> </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="st">"Promedio"</span><span class="ot">=</span>.) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>(<span class="at">format.args =</span> <span class="fu">list</span>(<span class="at">big.mark =</span> <span class="st">','</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+
+<table>
+<thead>
+<tr>
+<th style="text-align:right;">
+Promedio
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+6,271,464
+</td>
+</tr>
+</tbody>
+
+</table>
+<p>trim=0</p>
+</div>
+</div>
+<p><br> <br></p>
+<blockquote class="blockquote">
+<p>El promedio ajustado de salario mensual en pesos</p>
+</blockquote>
+<div class="cell" data-hash="qarodba_cache/html/unnamed-chunk-15_1360275b49a98607a1a93089ceed3e27">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>dfsalariosFut<span class="sc">$</span>Salario_mensual_MX <span class="sc">%&gt;%</span> </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mean</span>(<span class="at">trim =</span> <span class="fl">0.05</span>, <span class="at">na.rm =</span> T)<span class="sc">%&gt;%</span> </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="st">"Promedio Ajustado"</span><span class="ot">=</span>.) <span class="sc">%&gt;%</span> </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>(<span class="at">format.args =</span> <span class="fu">list</span>(<span class="at">big.mark =</span> <span class="st">','</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+
+<table>
+<thead>
+<tr>
+<th style="text-align:right;">
+Promedio Ajustado
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+5,709,157
+</td>
+</tr>
+</tbody>
+
+</table>
+<p>trim=0.05</p>
+</div>
+</div>
+<section id="analisis-de-distribucion" class="level3" data-number="2.4.1">
+<h3 data-number="2.4.1" class="anchored" data-anchor-id="analisis-de-distribucion"><span class="header-section-number">2.4.1</span> ANALISIS DE DISTRIBUCION</h3>
+<p>Comportamiento del salario en relacion a los jugadores</p>
+<div class="cell" data-hash="qarodba_cache/html/unnamed-chunk-16_fc85c9d92617c1030698f346a69d04b1">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dfsalariosFut, <span class="fu">aes</span>(Salario_mensual_MX))<span class="sc">+</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Densidad Salario</figcaption>
+<p><img src="qarodba_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell" data-hash="qarodba_cache/html/unnamed-chunk-17_f72c6b8ee515950a3768a56c58b3f56c">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dfsalariosFut, <span class="fu">aes</span>(Salario_mensual_MX))<span class="sc">+</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">25</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Distribución salario</figcaption>
+<p><img src="qarodba_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="resumen" class="level3" data-number="2.4.2">
+<h3 data-number="2.4.2" class="anchored" data-anchor-id="resumen"><span class="header-section-number">2.4.2</span> RESUMEN</h3>
+<blockquote class="blockquote">
+<p>Salario</p>
+</blockquote>
+<div class="cell" data-hash="qarodba_cache/html/unnamed-chunk-18_c84de6f835999b5b5c06953d1ff47745">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>dfsalariosFut <span class="sc">%&gt;%</span> </span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(Salario_mensual_MX))<span class="sc">+</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Boxplot Salario</figcaption>
+<p><img src="qarodba_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<blockquote class="blockquote">
+<p>Comparación por equipos</p>
+</blockquote>
+<div class="cell" data-hash="qarodba_cache/html/unnamed-chunk-19_8c5903deb5a1a149375061a6edf67c8e">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">scipen=</span><span class="dv">999</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>dfsalariosFut <span class="sc">%&gt;%</span> </span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(Equipo, Salario_mensual_MX, <span class="at">fill=</span>Equipo))<span class="sc">+</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Boxplot por Equipos</figcaption>
+<p><img src="qarodba_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="conclusión" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> CONCLUSIÓN</h1>
+<blockquote class="blockquote">
+<hr>
+</blockquote>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+<script src="qarodba_files/libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

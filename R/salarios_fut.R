@@ -211,4 +211,14 @@ ggboxplot(Indices_Landsat, "Transect", "NDVI") +
   ylab("Indice de vegetacion")
 
 
+quarto_render(input = here("ReporteQuarto/index.qmd"))
+
+
+quarto_render(input = "ReporteQuarto/qarodba.qmd",
+              output_file = "ReporteQuarto/index.html")
+
+quarto::quarto_render(here::here("ReporteQuarto/qarodba.qmd"),
+                      execute_dir = here::here("ReporteQuarto/docs"),
+                      output_format = "all", as_job = TRUE)
+
 
